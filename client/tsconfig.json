@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["DOM", "ESNext"],
+    "jsx": "react-jsx",
+    "strict": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler", // Use 'bundler' for compatibility with TypeScript extensions
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowImportingTsExtensions": true, // Enable importing .ts/.tsx extensions
+    "noEmit": true // Prevent emitting output files
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
+}
