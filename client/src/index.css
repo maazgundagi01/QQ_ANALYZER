@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+nav {
+    position: relative;
+    z-index: 1000; /* Ensure this is higher than other elements */
+}
+.text-shadow {
+    text-shadow: 2px 1px 4px rgba(0, 0, 0, 0.4); /* Adjust values as needed */
+  }
