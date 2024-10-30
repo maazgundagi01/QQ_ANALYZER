@@ -14,8 +14,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const sentiment_1 = __importDefault(require("sentiment"));
 //Initializations, etc.
 const app = (0, express_1.default)();
+const sentiment = new sentiment_1.default;
 dotenv_1.default.config();
 const port = process.env.PORT;
 const mongoUri = process.env.CONNECTION_URI;
@@ -30,8 +32,13 @@ const getComments = (videoId) => __awaiter(void 0, void 0, void 0, function* () 
         return response.json();
     })
         .then((data) => {
-        console.log(data);
-        return data;
+        const commentsWithSentiment = data.items.map((item) => {
+            const text = item.snippet.topLevelComment.snippet.textDisplay;
+            const sentimentResult = sentiment.analyze(text);
+            return Object.assign(Object.assign({}, item), { sentimentScore: sentimentResult.score });
+        });
+        console.log(commentsWithSentiment);
+        return commentsWithSentiment;
     })
         .catch(err => {
         console.error(`There was an error${err}`);
@@ -40,6 +47,19 @@ const getComments = (videoId) => __awaiter(void 0, void 0, void 0, function* () 
 });
 app.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const vidId = '5mEwh4MfwB4';
+    getComments(vidId)
+        .then(comments => {
+        res.json(comments);
+    })
+        .catch(err => {
+        res.status(500).json({ error: 'Failed to fetch comments' });
+    });
+}));
+app.get('/comments', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const vidId = req.query.videoId;
+    if (!vidId) {
+        return res.status(400).json({ error: 'Video ID is required' });
+    }
     getComments(vidId)
         .then(comments => {
         res.json(comments);

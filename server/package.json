@@ -22,7 +22,11 @@
     "express": "^4.21.1",
     "mongoose": "^8.7.3",
     "node-fetch": "^3.3.2",
+    "sentiment": "^5.0.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3"
+  },
+  "devDependencies": {
+    "@types/sentiment": "^5.0.4"
   }
 }

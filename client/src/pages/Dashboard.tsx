@@ -1,8 +1,33 @@
 import React from 'react';
 import TitleBar from "../components/TitleBar";
-import video1 from "../assets/1115063_Broadcast_Man_1280x720.mp4";
+import video1 from "../assets/1115063_Broadcast_Man_1280x720.mp4"
+import axios from 'axios';
+import { useState } from 'react';
 
 export default function Dashboard() {
+  const [videoId, setVideoId] = useState<string>('');
+  const [comments, setComments] = useState<any>([]);
+  
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setVideoId(event.target.value);
+ };
+
+  const fetchComments = () => {
+    axios.get(`http://localhost:8001/comments?videoId=${videoId}`)
+      .then((response) => setComments(response.data))
+      .catch((error) => console.error("Error fetching comments:", error));
+  };
+
+  function getSentimentColor(val: number) {
+    if (val > 0) {
+      return 'text-green-500'; // Tailwind CSS class for green text
+    } else if (val < 0) {
+      return 'text-red-500'; // Tailwind CSS class for red text
+    } else {
+      return 'text-gray-500'; // Tailwind CSS class for gray text
+    }
+  }
+
   return (
     <>
       <TitleBar title="Dashboard " />
@@ -25,13 +50,13 @@ export default function Dashboard() {
               <h1 className="mx-2 text-5xl text-white font-bold text-shadow">Sentiment Analysis for YouTube Videos</h1>
               <h2 className="text-white text-xl font-medium mt-6 text-shadow">Video comment section might be full of fans or trolls, but as long as it's full it has data!</h2>
               <p className="text-white mb-6 text-shadow">Understand what your audience feels, not just what they say</p>
-              <input
+              <input onChange={handleInputChange}
                 type="text"
                 placeholder="Enter YouTube Video ID"
                 className="border border-gray-300 rounded-lg p-2 mb-4 w-full max-w-md"
               />
               <div className="flex justify-center"> {/* Center the button */}
-                <button className="bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg mt-2">
+                <button onClick={fetchComments} className="bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg mt-2">
                   Submit
                 </button>
               </div>
@@ -42,13 +67,25 @@ export default function Dashboard() {
           <section className="flex flex-col md:flex-row mt-8 flex-grow space-y-4 md:space-y-0 md:space-x-4">
             {/* Comments Section (30% width) */}
             <div className="bg-white shadow-lg rounded-lg p-4 md:w-1/3 flex-grow">
-              <h2 className="text-xl font-semibold mb-2">Comments</h2>
+              <h2 className="text-xl font-semibold mb-2">Analyze</h2>
+              
               <div className="h-48 rounded-lg"></div> {/* Placeholder for comments */}
             </div>
 
             {/* Analysis Section (60% width) */}
             <div className="bg-white shadow-lg rounded-lg p-4 md:w-2/3 flex-grow">
-              <h2 className="text-xl font-semibold mb-2">Analysis</h2>
+              <h2 className="text-xl font-semibold mb-2">Comments</h2>
+              {
+                comments.map((comment: any, index: number) => (
+                  <div key={index} className="p-2 border-b border-gray-200">
+                    <p className={`text-xl ${getSentimentColor(comment.sentimentScore)}`}>
+                      Sentiment Score: <strong>{comment.sentimentScore}</strong>
+                    </p>
+                    <p><strong>User:</strong> {comment.snippet.topLevelComment.snippet.authorDisplayName}</p>
+                    <p><strong>Comment:</strong> {comment.snippet.topLevelComment.snippet.textDisplay}</p>
+                  </div>
+                ))
+              }
               <div className="h-48 rounded-lg"></div> {/* Placeholder for analysis */}
             </div>
           </section>
