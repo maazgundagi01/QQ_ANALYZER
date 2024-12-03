@@ -4,6 +4,7 @@ import video1 from "../assets/1115063_Broadcast_Man_1280x720.mp4"
 import axios from 'axios';
 import { useState } from 'react';
 
+
 export default function Dashboard() {
   const [videoId, setVideoId] = useState<string>('');
   const [comments, setComments] = useState<any>([]);
@@ -13,10 +14,11 @@ export default function Dashboard() {
  };
 
   const fetchComments = () => {
-    axios.get(`http://localhost:8001/comments?videoId=${videoId}`)
+    axios.get(`http://173.255.206.46:8001/comments?videoId=${videoId}`)
       .then((response) => setComments(response.data))
       .catch((error) => console.error("Error fetching comments:", error));
   };
+  
 
   function getSentimentColor(val: number) {
     if (val > 0) {
@@ -25,6 +27,20 @@ export default function Dashboard() {
       return 'text-red-500'; // Tailwind CSS class for red text
     } else {
       return 'text-gray-500'; // Tailwind CSS class for gray text
+    }
+  }
+
+  function commentDisplay(){
+    if(comments){return comments.map((comment: any, index: number) => (
+      <div key={index} className="p-2 border-b border-gray-200">
+        <p className={`text-xl ${getSentimentColor(comment.sentimentScore)}`}>
+          Sentiment Score:<strong>{comment.sentimentScore}</strong>
+        </p>
+        <p><strong>User:</strong> {comment.snippet.topLevelComment.snippet.authorDisplayName}</p>
+        <p><strong>Comment:</strong> {comment.snippet.topLevelComment.snippet.textDisplay}</p>
+      </div>
+    ))}else{
+      return 'Search something'
     }
   }
 
@@ -52,7 +68,7 @@ export default function Dashboard() {
               <p className="text-white mb-6 text-shadow">Understand what your audience feels, not just what they say</p>
               <input onChange={handleInputChange}
                 type="text"
-                placeholder="Enter YouTube Video ID"
+                placeholder="Enter YouTube Video URL"
                 className="border border-gray-300 rounded-lg p-2 mb-4 w-full max-w-md"
               />
               <div className="flex justify-center"> {/* Center the button */}
@@ -68,25 +84,17 @@ export default function Dashboard() {
             {/* Comments Section (30% width) */}
             <div className="bg-white shadow-lg rounded-lg p-4 md:w-1/3 flex-grow">
               <h2 className="text-xl font-semibold mb-2">Analyze</h2>
-              
+
               <div className="h-48 rounded-lg"></div> {/* Placeholder for comments */}
             </div>
 
             {/* Analysis Section (60% width) */}
-            <div className="bg-white shadow-lg rounded-lg p-4 md:w-2/3 flex-grow">
+            <div className="bg-white shadow-lg rounded-lg p-4 md:w-2/3 flex-grow  overflow-scroll">
               <h2 className="text-xl font-semibold mb-2">Comments</h2>
               {
-                comments.map((comment: any, index: number) => (
-                  <div key={index} className="p-2 border-b border-gray-200">
-                    <p className={`text-xl ${getSentimentColor(comment.sentimentScore)}`}>
-                      Sentiment Score: <strong>{comment.sentimentScore}</strong>
-                    </p>
-                    <p><strong>User:</strong> {comment.snippet.topLevelComment.snippet.authorDisplayName}</p>
-                    <p><strong>Comment:</strong> {comment.snippet.topLevelComment.snippet.textDisplay}</p>
-                  </div>
-                ))
+                commentDisplay()
               }
-              <div className="h-48 rounded-lg"></div> {/* Placeholder for analysis */}
+            <div className="h-48 rounded-lg"></div> {/* Placeholder for analysis */}
             </div>
           </section>
         </div>

@@ -32,7 +32,7 @@ export default function Home() {
               Unlock the Data, QQ Analyzer
             </h1>
             <p className="mt-8 text-pretty text-lg font-medium text-gray-500 sm:text-xl/8">
-            Uncover the Collective Voice in YouTube Comments with QQAnalyzer, the tool designed to reveal not just individual opinions but the broader sentiment that drives every conversation. 
+              Uncover the Collective Voice in YouTube Comments with QQAnalyzer, the tool designed to reveal not just individual opinions but the broader sentiment that drives every conversation. 
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <a
